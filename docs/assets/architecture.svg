@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" width="880" height="340" style="background:#090d16; border-radius:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="gradCyanBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="gradCard" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Title & Badge -->
+  <rect x="30" y="25" width="60" height="24" rx="6" fill="url(#gradCyanBlue)"/>
+  <text x="60" y="41" fill="#ffffff" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">WAN</text>
+  <text x="105" y="43" fill="#f8fafc" font-size="18" font-weight="700">Wan-Video Pilot Pipeline Architecture</text>
+  <text x="850" y="42" fill="#94a3b8" font-size="12" text-anchor="end">Production Diagnostics &amp; Agent Bridge</text>
+
+  <!-- Stage 1: Hardware Preflight & Attention Doctor -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="75" width="180" height="230" rx="10" fill="url(#gradCard)" stroke="#334155" stroke-width="1.5"/>
+    <rect x="45" y="90" width="150" height="26" rx="4" fill="#06b6d4" fill-opacity="0.15"/>
+    <text x="120" y="108" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle">1. Preflight Doctor</text>
+    <text x="45" y="145" fill="#f1f5f9" font-size="11" font-weight="600">• Hardware Telemetry</text>
+    <text x="55" y="165" fill="#94a3b8" font-size="10">VRAM &amp; Compute Cap</text>
+    <text x="45" y="195" fill="#f1f5f9" font-size="11" font-weight="600">• Attention Doctor</text>
+    <text x="55" y="215" fill="#94a3b8" font-size="10">Native SDPA vs FA-2</text>
+    <text x="55" y="230" fill="#94a3b8" font-size="10">Windows MSVC Fallback</text>
+    <text x="45" y="260" fill="#f1f5f9" font-size="11" font-weight="600">• OOM Trap Interceptor</text>
+    <text x="55" y="280" fill="#10b981" font-size="10">MoE, T5, DiT fp32, VAE</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 210 190 L 245 190" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
+  <polygon points="245,186 253,190 245,194" fill="#38bdf8"/>
+
+  <!-- Stage 2: Memory Estimator & Sequential Swapper -->
+  <g filter="url(#shadow)">
+    <rect x="255" y="75" width="180" height="230" rx="10" fill="url(#gradCard)" stroke="#334155" stroke-width="1.5"/>
+    <rect x="270" y="90" width="150" height="26" rx="4" fill="#3b82f6" fill-opacity="0.15"/>
+    <text x="345" y="108" fill="#60a5fa" font-size="12" font-weight="700" text-anchor="middle">2. VRAM Estimator</text>
+    <text x="270" y="145" fill="#f1f5f9" font-size="11" font-weight="600">• Exact Latent Tokens</text>
+    <text x="280" y="165" fill="#94a3b8" font-size="10">(H/16)(W/16)(1+(F-1)/4)</text>
+    <text x="270" y="195" fill="#f1f5f9" font-size="11" font-weight="600">• Sequential Offloader</text>
+    <text x="280" y="215" fill="#94a3b8" font-size="10">Dual-expert swap @ t_moe</text>
+    <text x="280" y="230" fill="#10b981" font-size="10">53.6GB → 18.5GB Peak</text>
+    <text x="270" y="260" fill="#f1f5f9" font-size="11" font-weight="600">• Tiled 3D Causal VAE</text>
+    <text x="280" y="280" fill="#94a3b8" font-size="10">Caps decode to ~1.8 GB</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <path d="M 435 190 L 470 190" stroke="#60a5fa" stroke-width="2" stroke-dasharray="4,4"/>
+  <polygon points="470,186 478,190 470,194" fill="#60a5fa"/>
+
+  <!-- Stage 3: Multi-Target Compiler & Media Guard -->
+  <g filter="url(#shadow)">
+    <rect x="480" y="75" width="180" height="230" rx="10" fill="url(#gradCard)" stroke="#334155" stroke-width="1.5"/>
+    <rect x="495" y="90" width="150" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.15"/>
+    <text x="570" y="108" fill="#a78bfa" font-size="12" font-weight="700" text-anchor="middle">3. Workflow Compiler</text>
+    <text x="495" y="145" fill="#f1f5f9" font-size="11" font-weight="600">• Canonical Pipeline IR</text>
+    <text x="505" y="165" fill="#94a3b8" font-size="10">Temporal rule F = 4k + 1</text>
+    <text x="495" y="195" fill="#f1f5f9" font-size="11" font-weight="600">• Multi-Target Codegen</text>
+    <text x="505" y="215" fill="#94a3b8" font-size="10">ComfyUI /prompt &amp; Canvas</text>
+    <text x="505" y="230" fill="#94a3b8" font-size="10">Bash &amp; PS1 Golden Flags</text>
+    <text x="495" y="260" fill="#f1f5f9" font-size="11" font-weight="600">• Media Validator</text>
+    <text x="505" y="280" fill="#10b981" font-size="10">EXIF auto-transposition</text>
+  </g>
+
+  <!-- Arrow 3 -> 4 -->
+  <path d="M 660 190 L 695 190" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4,4"/>
+  <polygon points="695,186 703,190 695,194" fill="#a78bfa"/>
+
+  <!-- Stage 4: Agent Bridge (FastMCP & WebMCP) -->
+  <g filter="url(#shadow)">
+    <rect x="705" y="75" width="145" height="230" rx="10" fill="url(#gradCard)" stroke="#334155" stroke-width="1.5"/>
+    <rect x="715" y="90" width="125" height="26" rx="4" fill="#10b981" fill-opacity="0.15"/>
+    <text x="777" y="108" fill="#34d399" font-size="12" font-weight="700" text-anchor="middle">4. Agent Bridge</text>
+    <text x="715" y="145" fill="#f1f5f9" font-size="11" font-weight="600">• FastMCP Server</text>
+    <text x="725" y="165" fill="#94a3b8" font-size="10">Stdio JSON-RPC 2.0</text>
+    <text x="725" y="180" fill="#94a3b8" font-size="10">Spec 2024-11-05</text>
+    <text x="715" y="210" fill="#f1f5f9" font-size="11" font-weight="600">• 5 Agent Tools</text>
+    <text x="725" y="230" fill="#94a3b8" font-size="10">diagnose, estimate,</text>
+    <text x="725" y="245" fill="#94a3b8" font-size="10">compile, validate, run</text>
+    <text x="715" y="275" fill="#f1f5f9" font-size="11" font-weight="600">• Web Workbench</text>
+    <text x="725" y="295" fill="#38bdf8" font-size="10">Zero-install Studio UI</text>
+  </g>
+</svg>

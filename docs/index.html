@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wan-Video Pilot — Studio Workbench & Agent Bridge</title>
+  <meta name="description" content="Production preflight diagnostics, analytical VRAM budgeting, ComfyUI/CLI compilation, and agent bridge for Alibaba Wan-Video models.">
+  <link rel="stylesheet" href="workbench.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Wan-Video Pilot",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux, Windows, macOS",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Engineer Abdullah Bin Zafar",
+      "url": "https://github.com/EngineerAbdullahBinZafar"
+    }
+  }
+  </script>
+</head>
+<body class="dark-theme">
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <span class="logo-badge">WAN</span>
+        <h1>Wan-Video Pilot <span class="version-tag">v0.1.0</span></h1>
+      </div>
+      <p class="subtitle">Production Diagnostics, VRAM Budgeting & Workflow Compiler for Wan2.1 and Wan2.2 MoE</p>
+      <div class="nav-links">
+        <a href="https://github.com/EngineerAbdullahBinZafar/wan-pilot" target="_blank" rel="noopener">GitHub Repository</a>
+        <a href="mcp-actions.json" target="_blank">WebMCP Actions</a>
+        <a href="llms.txt" target="_blank">llms.txt</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Grid Column 1: Diagnostics & Hardware Inspector -->
+    <section class="card diagnostics-card" data-mcp-action="diagnose_preflight">
+      <div class="card-header">
+        <h2>1. Hardware Preflight & Attention Doctor</h2>
+        <span class="status-indicator live">READY</span>
+      </div>
+      <div class="card-body">
+        <div class="diag-group">
+          <label for="gpuSelect">Target Hardware Profile:</label>
+          <select id="gpuSelect" class="form-input">
+            <option value="4090">NVIDIA GeForce RTX 4090 (24 GB VRAM)</option>
+            <option value="3090">NVIDIA GeForce RTX 3090 (24 GB VRAM)</option>
+            <option value="4070">NVIDIA GeForce RTX 4070 (12 GB VRAM)</option>
+            <option value="custom">Custom / System Telemetry</option>
+          </select>
+        </div>
+
+        <div class="diag-results">
+          <div class="metric-row">
+            <span>Attention Backend:</span>
+            <strong id="attBackend" class="badge badge-success">SDPA (PyTorch Native)</strong>
+          </div>
+          <div class="metric-row">
+            <span>Windows MSVC Status:</span>
+            <span id="msvcStatus">Auto-fallback active (Zero compiler trap)</span>
+          </div>
+          <div class="metric-row">
+            <span>OOM Traps Monitored:</span>
+            <span class="code-pill">MoE Concurrent</span>
+            <span class="code-pill">T5 VRAM</span>
+            <span class="code-pill">DiT FP32</span>
+            <span class="code-pill">VAE Spike</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid Column 2: Analytical VRAM Estimator -->
+    <section class="card estimator-card" data-mcp-action="estimate_memory">
+      <div class="card-header">
+        <h2>2. Analytical VRAM Budget Calculator</h2>
+        <span class="status-indicator calc">ANALYTICAL</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="modelSelect">Model Variant:</label>
+            <select id="modelSelect" class="form-input">
+              <option value="wan2.2_moe_14b" selected>Wan2.2 MoE 14B (Dual-Expert)</option>
+              <option value="wan2.1_14b">Wan2.1 14B (Dense DiT)</option>
+              <option value="wan2.1_1.3b">Wan2.1 1.3B (Compact)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="resolutionSelect">Resolution:</label>
+            <select id="resolutionSelect" class="form-input">
+              <option value="480p">480p (832 x 480)</option>
+              <option value="720p" selected>720p (1280 x 720)</option>
+              <option value="1080p">1080p (1920 x 1080)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="precisionSelect">Precision:</label>
+            <select id="precisionSelect" class="form-input">
+              <option value="fp8" selected>FP8 (1.0 byte / param)</option>
+              <option value="bf16">BF16 (2.0 bytes / param)</option>
+              <option value="int4">INT4 (0.55 bytes / param)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toggles-grid">
+          <label class="toggle-label">
+            <input type="checkbox" id="moeOffload" checked>
+            <span>Sequential Expert Swapping at \(t_{\text{moe}}\)</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="t5Cpu" checked>
+            <span>T5 Encoder on Host CPU RAM</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="tiledVae" checked>
+            <span>Tiled 3D Causal VAE Decode</span>
+          </label>
+        </div>
+
+        <div class="vram-meter-box">
+          <div class="vram-header">
+            <span>Peak VRAM Required:</span>
+            <strong id="peakVramText">18.47 GB</strong>
+            <span id="gpuFitBadge" class="badge badge-success">Fits 24GB GPU</span>
+          </div>
+          <div class="progress-bar-container">
+            <div id="vramBar" class="progress-bar" style="width: 76.9%;"></div>
+          </div>
+          <div class="vram-subtext">
+            <span>Without sequential swapping: <span id="concurrentVramText" class="danger-text">53.6 GB (Crash / OOM)</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid Column 3: Workflow Compiler & Export -->
+    <section class="card compiler-card" data-mcp-action="compile_workflow">
+      <div class="card-header">
+        <h2>3. Multi-Target Workflow Compiler</h2>
+        <span class="status-indicator green">ACTIVE</span>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="promptInput">Prompt:</label>
+          <textarea id="promptInput" class="form-input prompt-area" rows="3">A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn.</textarea>
+        </div>
+
+        <div class="export-tabs">
+          <button class="tab-btn active" data-target="cli_bash">Official Bash</button>
+          <button class="tab-btn" data-target="cli_powershell">PowerShell</button>
+          <button class="tab-btn" data-target="comfyui_api">ComfyUI Prompt API</button>
+          <button class="tab-btn" data-target="comfyui_canvas">ComfyUI Canvas</button>
+          <button class="tab-btn" data-target="diffusers">Diffusers</button>
+        </div>
+
+        <div class="code-container">
+          <div class="code-actions">
+            <span id="codeLangTag">BASH</span>
+            <button id="copyBtn" class="btn btn-sm">Copy Code</button>
+          </div>
+          <pre><code id="outputCode"># Official Wan2.2 Execution Script
+CUDA_VISIBLE_DEVICES=0 python generate.py \
+  --task t2v-14B \
+  --size 1280*720 \
+  --prompt "A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn." \
+  --precision fp8 \
+  --expert_offload True \
+  --t5_cpu True \
+  --tiled_vae True</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>Architected by <strong>Engineer Abdullah Bin Zafar</strong> • Open-Source under Apache-2.0 License</p>
+      <p class="footer-note">Wan-Video is developed by Alibaba Cloud. Wan-Video Pilot is an independent community bridge and optimization toolkit.</p>
+    </div>
+  </footer>
+
+  <script src="workbench.js"></script>
+</body>
+</html>

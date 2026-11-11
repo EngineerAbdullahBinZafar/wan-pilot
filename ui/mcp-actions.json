@@ -1,0 +1,55 @@
+[
+  {
+    "name": "diagnose_preflight",
+    "description": "Inspects local GPU hardware environment, compute capability, VRAM headroom, and attention backends.",
+    "parameters": {
+      "model_variant": {
+        "type": "string",
+        "default": "wan2.2_moe_14b",
+        "enum": ["wan2.1_1.3b", "wan2.1_14b", "wan2.2_moe_14b", "wan2.2_moe_27b"]
+      },
+      "resolution": {
+        "type": "string",
+        "default": "720p",
+        "enum": ["480p", "720p", "1080p"]
+      }
+    }
+  },
+  {
+    "name": "estimate_memory",
+    "description": "Computes exact analytical VRAM breakdown, MoE dual-expert swapping, and tiled VAE bounds.",
+    "parameters": {
+      "model_variant": {"type": "string", "default": "wan2.2_moe_14b"},
+      "resolution": {"type": "string", "default": "720p"},
+      "precision": {"type": "string", "default": "fp8", "enum": ["fp32", "bf16", "fp8", "int8", "int4"]},
+      "t5_cpu": {"type": "boolean", "default": true},
+      "tiled_vae": {"type": "boolean", "default": true}
+    }
+  },
+  {
+    "name": "validate_media_inputs",
+    "description": "Validates and normalizes conditioning image (EXIF orientation auto-transposition) or input video.",
+    "parameters": {
+      "image_path": {"type": "string"},
+      "video_path": {"type": "string"}
+    }
+  },
+  {
+    "name": "compile_workflow",
+    "description": "Compiles canonical pipeline IR into ComfyUI (/prompt or canvas UI JSON), CLI script, or Diffusers code.",
+    "parameters": {
+      "prompt": {"type": "string", "required": true},
+      "target_format": {"type": "string", "default": "cli_bash", "enum": ["cli_bash", "cli_powershell", "comfyui_api", "comfyui_canvas", "diffusers"]},
+      "model": {"type": "string", "default": "wan2.2_moe_14b"},
+      "resolution": {"type": "string", "default": "720p"}
+    }
+  },
+  {
+    "name": "execute_local_pipeline",
+    "description": "Validates and simulates local execution of a generated Wan pipeline plan in dry-run mode.",
+    "parameters": {
+      "plan_json": {"type": "object"},
+      "dry_run": {"type": "boolean", "default": true}
+    }
+  }
+]

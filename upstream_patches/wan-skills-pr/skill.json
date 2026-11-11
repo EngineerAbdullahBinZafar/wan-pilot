@@ -1,0 +1,15 @@
+{
+  "name": "wan-pilot",
+  "version": "0.1.0",
+  "description": "Local VRAM diagnostics, ComfyUI/CLI compiler, and FastMCP server for Wan2.1 and Wan2.2 MoE models.",
+  "author": "EngineerAbdullahBinZafar",
+  "entrypoint": "python -m wan_video_toolkit.mcp.server",
+  "protocol": "mcp-2024-11-05",
+  "tools": [
+    "diagnose_preflight",
+    "compile_workflow",
+    "estimate_memory",
+    "validate_media_inputs",
+    "execute_local_pipeline"
+  ]
+}

@@ -1,0 +1,24 @@
+--- wan/modules/media.py.orig
++++ wan/modules/media.py
+@@ -12,6 +12,7 @@
+ import os
+ import torch
+ from PIL import Image, ImageOps
++import warnings
+ 
+ def load_and_preprocess_image(image_path, target_width=None, target_height=None):
+     """
+@@ -21,6 +22,12 @@
+     if not os.path.exists(image_path):
+         raise FileNotFoundError(f"Image not found: {image_path}")
+     
+-    img = Image.open(image_path)
++    raw_img = Image.open(image_path)
++    # Auto-transpose EXIF orientation (resolves #415)
++    img = ImageOps.exif_transpose(raw_img)
++    if img is None:
++        img = raw_img
++    
+     if img.mode != 'RGB':
+         img = img.convert('RGB')
+     

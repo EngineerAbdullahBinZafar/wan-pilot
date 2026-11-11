@@ -1,0 +1,28 @@
+--- wan/utils/video.py.orig
++++ wan/utils/video.py
+@@ -45,10 +45,26 @@
+     except Exception as e:
+         # Fallback to software libx264
+-        try:
+-            ffmpeg.input(...).output(..., vcodec='libx264').run()
+-        except:
+-            pass
++        codecs = ['libx264', 'libopenh264', 'mpeg4']
++        success = False
++        for codec in codecs:
++            try:
++                # Attempt encode with candidate codec
++                run_ffmpeg_encode(frames, output_path, vcodec=codec, fps=fps)
++                if os.path.exists(output_path) and os.path.getsize(output_path) > 1024:
++                    success = True
++                    break
++            except Exception:
++                continue
++        
++        if not success:
++            # Disaster recovery: dump frame sequence to avoid silent generation data loss
++            dump_dir = f"{output_path}_frames"
++            os.makedirs(dump_dir, exist_ok=True)
++            for idx, frame in enumerate(frames):
++                frame.save(os.path.join(dump_dir, f"frame_{idx:05d}.png"))
++            raise RuntimeError(f"Video encoding failed across all hardware/software codecs. Raw frames preserved at: {dump_dir}")
