@@ -4,39 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>wan-pilot — Studio Workbench & Agent Bridge</title>
-  <meta name="description" content="Industrial-grade preflight diagnostics, analytical VRAM budgeting, ComfyUI/CLI compilation, and agent bridge for Alibaba Wan-Video models.">
+  <meta name="description" content="Flagship AI Video Creation & Engineering Platform for Alibaba Wan-Video Models (Wan2.1 & Wan2.2 MoE).">
   <link rel="stylesheet" href="workbench.css">
   <!-- KaTeX for crisp mathematical rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "wan-pilot",
-    "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "Linux, Windows, macOS",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "author": {
-      "@type": "Person",
-      "name": "Engineer Abdullah Bin Zafar",
-      "url": "https://github.com/EngineerAbdullahBinZafar"
-    }
-  }
-  </script>
 </head>
-<body class="dark-theme">
-  <!-- Top App Bar -->
+<body class="dark-theme mode-studio">
+
+  <!-- Top App Navigation Bar -->
   <header class="app-header">
     <div class="header-container">
-      <div class="brand">
+      <div class="brand-group">
         <!-- Custom Origami Ribbon W Logo (100% Original SVG) -->
-        <svg class="origami-logo" width="38" height="38" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="origami-logo" width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="wGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#9333ea" />
@@ -54,224 +36,287 @@
           <path d="M6 14L15 36L22 20L15 14H6Z" fill="url(#wGrad1)" />
           <path d="M15 36L24 16L33 36L22 20L15 36Z" fill="url(#wGrad2)" />
           <path d="M33 36L42 14H33L26 28L33 36Z" fill="url(#wGrad3)" />
-          <circle cx="24" cy="12" r="2.5" fill="#38bdf8" />
+          <circle cx="24" cy="12" r="2.5" fill="#06b6d4" />
         </svg>
         <span class="brand-title">wan-pilot</span>
-        <span class="system-pill"><span class="pulse-dot"></span> System <code class="tag-code">#7c3aed</code></span>
+        
+        <!-- Clean Hardware Status Badge (Replacing debug hex strings) -->
+        <div class="hardware-pill">
+          <span class="pulse-dot-green"></span>
+          <span class="hardware-text" id="headerHardwareBadge">RTX 4090 • 24GB Ready</span>
+        </div>
       </div>
 
-      <div class="header-meta">
-        <span class="meta-item"><span class="meta-label">NTP</span> DALICS</span>
-        <span class="meta-item"><span class="meta-label">State</span> <code class="tag-code">#0880c14</code></span>
-        <a href="https://github.com/EngineerAbdullahBinZafar/wan-pilot" target="_blank" rel="noopener" class="header-link">GitHub v0.1.0</a>
+      <!-- Segmented View Mode Switcher [ Studio | Pro / Dev ] -->
+      <div class="mode-switcher-container">
+        <div class="segmented-control" role="tablist">
+          <button id="modeStudioBtn" class="seg-btn active" role="tab" aria-selected="true">
+            <span class="seg-icon">✦</span> Studio
+          </button>
+          <button id="modeDevBtn" class="seg-btn" role="tab" aria-selected="false">
+            <span class="seg-icon">⚡</span> Pro / Dev
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a href="https://github.com/EngineerAbdullahBinZafar/wan-pilot" target="_blank" rel="noopener" class="gh-pill-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>v0.1.0</span>
+        </a>
       </div>
     </div>
   </header>
 
-  <!-- Studio Dashboard Layout -->
-  <main class="workbench-layout">
-    
-    <!-- Left Column: High-Density Telemetry & Latents -->
-    <aside class="column telemetry-col">
-      <div class="panel-card telemetry-card">
-        <div class="card-caption">Latent Dimensions</div>
-        <div class="metric-huge" id="tokenCountDisplay">75,600 <span class="metric-unit">tokens</span></div>
-        <div class="metric-subdetail">\(T_{\text{latent}} = 21\) • \(H \times W = 45 \times 80\)</div>
-      </div>
+  <!-- Main Unified Workspace Flow: Prompt Hero -> Stage -> Controls -->
+  <main class="studio-app-container">
 
-      <div class="panel-card telemetry-card">
-        <div class="card-caption-row">
-          <span class="card-caption">Memory Telemetry</span>
-          <span class="metric-cap">/ 24.00 GB</span>
-        </div>
-        <div class="metric-huge purple-glow" id="peakVramDisplay">15.35 GB</div>
-        <div class="progress-track">
-          <div class="progress-fill purple-fill" id="vramProgressFill" style="width: 63.9%;"></div>
-        </div>
-        <div class="metric-subdetail" id="vramStatusSub">Sequential Swapping: Peak constrained below 18.47 GB</div>
-      </div>
-
-      <div class="panel-card telemetry-card">
-        <div class="card-caption-row">
-          <span class="card-caption">Dense Concurrent Peak</span>
-          <span class="metric-cap">/ 24.00 GB</span>
-        </div>
-        <div class="metric-huge red-glow" id="concurrentVramDisplay">53.60 GB</div>
-        <div class="progress-track">
-          <div class="progress-fill red-fill" style="width: 100%;"></div>
-        </div>
-        <div class="metric-subdetail danger-text">Requires 80GB H100 unless Swapped</div>
-      </div>
-
-      <div class="panel-card config-summary-card">
-        <div class="card-caption">Engine Hardware Target</div>
-        <div class="config-row">
-          <span>GPU Profile:</span>
-          <select id="gpuSelect" class="studio-select">
-            <option value="4090" selected>RTX 4090 (24 GB VRAM)</option>
-            <option value="3090">RTX 3090 (24 GB VRAM)</option>
-            <option value="4070">RTX 4070 (12 GB VRAM)</option>
-            <option value="a100">NVIDIA A100 (80 GB VRAM)</option>
-          </select>
-        </div>
-        <div class="config-row">
-          <span>Attention:</span>
-          <span class="tag-status live">SDPA Native</span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Center Column: Controls & Compiler Actions -->
-    <section class="column controls-col">
-      <div class="panel-card control-card">
-        <div class="card-header-clean">
-          <h3>Optimization Switches</h3>
-          <span class="badge-subtle">FastPath</span>
-        </div>
-
-        <!-- MoE Sequential Offload Switch (Matching the Video) -->
-        <div class="switch-row">
-          <div class="switch-info">
-            <span class="switch-title">MoE Sequential Offload</span>
-            <span class="switch-desc">Swap Expert \(\mathcal{E}_1 \to \mathcal{E}_2\) at \(t_{\text{moe}}\)</span>
-          </div>
-          <label class="studio-switch">
-            <input type="checkbox" id="moeOffloadSwitch" checked>
-            <span class="switch-slider cyan-glow"></span>
-          </label>
-        </div>
-
-        <div class="switch-row">
-          <div class="switch-info">
-            <span class="switch-title">T5 Text Encoder Offload</span>
-            <span class="switch-desc">Hold 4.8B T5 weights in Host CPU RAM</span>
-          </div>
-          <label class="studio-switch">
-            <input type="checkbox" id="t5CpuSwitch" checked>
-            <span class="switch-slider cyan-glow"></span>
-          </label>
-        </div>
-
-        <div class="switch-row">
-          <div class="switch-info">
-            <span class="switch-title">Tiled 3D Causal VAE</span>
-            <span class="switch-desc">Spatial 4-tile split (prevents 22GB spike)</span>
-          </div>
-          <label class="studio-switch">
-            <input type="checkbox" id="tiledVaeSwitch" checked>
-            <span class="switch-slider cyan-glow"></span>
-          </label>
-        </div>
-
-        <div class="parameters-grid">
-          <div class="param-box">
-            <label for="modelSelect">Model Arch</label>
-            <select id="modelSelect" class="studio-select">
-              <option value="wan2.2_moe_14b" selected>Wan2.2 MoE 14B</option>
-              <option value="wan2.1_14b">Wan2.1 Dense 14B</option>
-              <option value="wan2.1_1.3b">Wan2.1 Compact 1.3B</option>
-            </select>
+    <!-- 1. Top Hero: Prompt & Quick Generation Bar -->
+    <section class="prompt-hero-card">
+      <div class="prompt-input-wrapper">
+        <textarea id="promptInput" class="hero-prompt-field" rows="2" placeholder="Describe the scene you want to synthesize...">A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn.</textarea>
+        
+        <div class="prompt-actions-bar">
+          <div class="preset-chips-group">
+            <span class="chips-label">Presets:</span>
+            <button class="preset-chip" data-prompt="Cyberpunk street in heavy rain with vibrant neon holographic reflections and sleek futuristic cars gliding smoothly.">Cyberpunk Neon</button>
+            <button class="preset-chip" data-prompt="35mm film grain documentary of a desert nomad caravan traversing golden sweeping dunes at sunset.">35mm Film Grain</button>
+            <button class="preset-chip" data-prompt="Architectural drone flyover through a solarpunk vertical garden metropolis with waterfall bridges.">Architectural Drone</button>
+            <button class="preset-chip" data-prompt="Macro 8K close-up of a bioluminescent deep-sea jellyfish pulsing with translucent sapphire tendrils.">Macro Bioluminescence</button>
           </div>
 
-          <div class="param-box">
-            <label for="resolutionSelect">Resolution</label>
-            <select id="resolutionSelect" class="studio-select">
-              <option value="480p">480p (832 x 480)</option>
-              <option value="720p" selected>720p (1280 x 720)</option>
-              <option value="1080p">1080p (1920 x 1080)</option>
-            </select>
+          <div class="hero-cta-wrapper">
+            <button id="synthesizeBtn" class="primary-action-btn">
+              <span class="btn-icon">▶</span>
+              <span class="btn-text">Synthesize Latents</span>
+            </button>
           </div>
-
-          <div class="param-box">
-            <label for="precisionSelect">Precision</label>
-            <select id="precisionSelect" class="studio-select">
-              <option value="fp8" selected>FP8 (1.0 B/p)</option>
-              <option value="bf16">BF16 (2.0 B/p)</option>
-              <option value="int4">INT4 (0.55 B/p)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Synthesize Latents Action Button (As seen in the Video) -->
-        <button id="synthesizeBtn" class="action-btn-neon">
-          <span class="btn-text">Synthesize Latents</span>
-        </button>
-      </div>
-
-      <!-- Prompt Input & Workflow Compiler Drawer -->
-      <div class="panel-card compiler-card">
-        <div class="card-header-clean">
-          <h3>Cinematic Prompt & Workflow Compiler</h3>
-          <div class="tab-chips">
-            <button class="chip-btn active" data-format="cli_bash">Bash</button>
-            <button class="chip-btn" data-format="cli_powershell">PowerShell</button>
-            <button class="chip-btn" data-format="comfyui">ComfyUI</button>
-          </div>
-        </div>
-
-        <textarea id="promptInput" class="studio-textarea" rows="2" placeholder="Describe the scene...">A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn.</textarea>
-
-        <div class="code-viewport">
-          <div class="code-viewport-bar">
-            <span id="compilerTargetLabel">BASH SCRIPT</span>
-            <button id="copyCodeBtn" class="copy-pill">Copy</button>
-          </div>
-          <pre><code id="outputCodeSnippet"># Compiler generating...</code></pre>
         </div>
       </div>
     </section>
 
-    <!-- Right Column: Live Video Canvas & Render Viewport -->
-    <aside class="column viewport-col">
-      <div class="panel-card viewport-card">
-        <div class="viewport-header">
-          <div class="viewport-title-group">
-            <span class="preview-badge">Preview</span>
-            <span class="preview-status" id="previewStatusLabel">Active Latent Stream</span>
+    <!-- 2. Main Stage Grid: Video Viewport & Controls -->
+    <div class="stage-grid">
+      
+      <!-- Video Preview Focal Stage (Expanded Centerpiece) -->
+      <section class="stage-preview-card">
+        <div class="preview-toolbar">
+          <div class="preview-status-meta">
+            <span class="live-indicator"></span>
+            <span class="stage-tag" id="previewStatusLabel">Active Latent Stream</span>
+            <span class="res-badge" id="previewResBadge">720p • 24fps</span>
           </div>
-          <div class="viewport-controls">
-            <span class="timecode" id="timecodeDisplay">00:00:09.08</span>
+
+          <div class="stage-metrics">
+            <span class="timecode-label" id="timecodeDisplay">00:00:09.08</span>
+            <button id="downloadMp4Btn" class="action-ghost-btn" title="Download Rendered MP4">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download MP4</span>
+            </button>
           </div>
         </div>
 
-        <!-- Interactive Animated Canvas Simulating Latent Swirls -->
-        <div class="canvas-wrapper">
-          <canvas id="latentCanvas" width="640" height="360"></canvas>
-          <div class="canvas-overlay-tag" id="canvasTag">Noties</div>
+        <!-- High-Resolution Canvas Focal Frame -->
+        <div class="canvas-focal-frame">
+          <canvas id="latentCanvas" width="960" height="540"></canvas>
+          <div class="focal-glass-badge" id="canvasTag">Wan2.2 MoE Engine</div>
         </div>
 
-        <!-- Video Playback & Scrubber Controls -->
-        <div class="playback-bar">
-          <button id="playPauseBtn" class="control-icon-btn">❚❚</button>
-          <div class="scrubber-track">
-            <div class="scrubber-fill" id="scrubberFill" style="width: 75%;"></div>
+        <!-- Frame Scrubber & Playback Controls -->
+        <div class="scrubber-bar">
+          <button id="playPauseBtn" class="transport-btn" aria-label="Play or Pause">❚❚</button>
+          <div class="scrub-track-wrapper" id="scrubberTrack">
+            <div class="scrub-progress-fill" id="scrubberFill" style="width: 75%;"></div>
           </div>
-          <span class="playback-pct" id="playbackPctText">75%</span>
+          <span class="playback-progress-pct" id="playbackPctText">75%</span>
         </div>
-      </div>
+      </section>
 
-      <!-- Live Terminal Console Drawer -->
-      <div class="panel-card console-card">
-        <div class="console-header">
-          <span>Engine Diagnostics Stream</span>
-          <span class="live-dot-green"></span>
+      <!-- Side Configuration Panel -->
+      <aside class="stage-controls-card">
+        
+        <!-- Creator Mode Quick Controls (Clean & Simple) -->
+        <div class="creator-quick-controls">
+          <div class="panel-section-title">Generation Settings</div>
+          
+          <div class="control-row">
+            <label>Aspect Ratio</label>
+            <div class="aspect-ratio-selector">
+              <button class="aspect-btn active" data-ratio="16:9">16:9 Landscape</button>
+              <button class="aspect-btn" data-ratio="9:16">9:16 Vertical</button>
+              <button class="aspect-btn" data-ratio="1:1">1:1 Square</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <label for="qualityPresetSelect">Quality Preset</label>
+            <select id="qualityPresetSelect" class="studio-select-full">
+              <option value="cinematic" selected>Cinematic (720p • 81 Frames • 50 Steps)</option>
+              <option value="balanced">Balanced (720p • 49 Frames • 30 Steps)</option>
+              <option value="fast">Fast Draft (480p • 33 Frames • 20 Steps)</option>
+            </select>
+          </div>
         </div>
-        <div class="console-body" id="consoleBody">
-          <div class="log-line">[00:00:01.02] <span class="log-cyan">INIT</span> Device: NVIDIA RTX 4090 • 24.00 GB detected</div>
-          <div class="log-line">[00:00:02.15] <span class="log-purple">MOE</span> Sequential swap strategy enabled: \(M_{\text{peak}} \le 18.47\text{ GB}\)</div>
-          <div class="log-line">[00:00:03.40] <span class="log-green">LATENTS</span> Allocated \(75,600\) tokens across 81 frames</div>
-          <div class="log-line">[00:00:04.88] <span class="log-cyan">DIFFUSION</span> Step 24/50 • Temporal attention stable</div>
+
+        <!-- Unified GPU VRAM Health Bar (Clean & Consolidated) -->
+        <div class="gpu-health-box">
+          <div class="gpu-health-header">
+            <span class="gpu-title">GPU VRAM Allocation</span>
+            <span class="gpu-readout" id="unifiedVramReadout">15.35 GB / 24.00 GB</span>
+          </div>
+          <div class="segmented-vram-track">
+            <div class="vram-segment safe-segment" id="vramSafeSegment" style="width: 63.9%;"></div>
+          </div>
+          <div class="vram-headroom-meta">
+            <span class="headroom-label" id="vramHeadroomLabel">8.65 GB Free Headroom (Safe)</span>
+            <span class="backend-tag">SDPA Native</span>
+          </div>
         </div>
-      </div>
-    </aside>
+
+        <!-- Pro / Dev Optimization Switches (Collapsible / Advanced) -->
+        <div class="dev-feature-block">
+          <div class="panel-section-title-between">
+            <span>MoE & Memory Offload</span>
+            <span class="subtle-badge">FastPath</span>
+          </div>
+
+          <div class="switch-item">
+            <div class="switch-text-col">
+              <span class="switch-main-label">MoE Sequential Swapping</span>
+              <span class="switch-sub-label">Swaps \(\mathcal{E}_1 \to \mathcal{E}_2\) at \(t_{\text{moe}}\) • Saves ~35GB VRAM</span>
+            </div>
+            <label class="studio-toggle">
+              <input type="checkbox" id="moeOffloadSwitch" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="switch-item">
+            <div class="switch-text-col">
+              <span class="switch-main-label">T5 CPU Offload</span>
+              <span class="switch-sub-label">Stores 4.8B text encoder in Host RAM</span>
+            </div>
+            <label class="studio-toggle">
+              <input type="checkbox" id="t5CpuSwitch" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="switch-item">
+            <div class="switch-text-col">
+              <span class="switch-main-label">Tiled 3D Causal VAE</span>
+              <span class="switch-sub-label">Splits spatial decoding into 4 tiles</span>
+            </div>
+            <label class="studio-toggle">
+              <input type="checkbox" id="tiledVaeSwitch" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <!-- Advanced Dev Parameters Grid -->
+          <div class="advanced-params-grid">
+            <div class="param-unit">
+              <label for="modelSelect">Model Arch</label>
+              <select id="modelSelect" class="studio-select">
+                <option value="wan2.2_moe_14b" selected>Wan2.2 MoE 14B</option>
+                <option value="wan2.1_14b">Wan2.1 Dense 14B</option>
+                <option value="wan2.1_1.3b">Wan2.1 Compact 1.3B</option>
+              </select>
+            </div>
+
+            <div class="param-unit">
+              <label for="resolutionSelect">Resolution</label>
+              <select id="resolutionSelect" class="studio-select">
+                <option value="480p">480p (832x480)</option>
+                <option value="720p" selected>720p (1280x720)</option>
+                <option value="1080p">1080p (1920x1080)</option>
+              </select>
+            </div>
+
+            <div class="param-unit">
+              <label for="precisionSelect">Precision</label>
+              <select id="precisionSelect" class="studio-select">
+                <option value="fp8" selected>FP8 (1.0 B/p)</option>
+                <option value="bf16">BF16 (2.0 B/p)</option>
+                <option value="int4">INT4 (0.55 B/p)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Latents Calculation Card -->
+          <div class="latents-info-card">
+            <div class="latents-row">
+              <span>Latent Dimension:</span>
+              <strong id="tokenCountDisplay" class="tabular-stat">75,600 tokens</strong>
+            </div>
+            <div class="latents-sub-math">\(T_{\text{latent}} = 21\) • \(H \times W = 45 \times 80\)</div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- 3. Pro / Dev Deep Inspection & Compiler Section -->
+    <div class="dev-deep-section">
+      
+      <!-- Multi-Target Workflow Compiler with Syntax Highlighting -->
+      <section class="compiler-surface-card">
+        <div class="compiler-header-bar">
+          <div class="compiler-title-group">
+            <span class="compiler-title">Workflow Compiler</span>
+            <div class="compiler-tab-group">
+              <button class="comp-tab active" data-format="cli_bash">Bash Script</button>
+              <button class="comp-tab" data-format="cli_powershell">PowerShell</button>
+              <button class="comp-tab" data-format="comfyui">ComfyUI Workflow (JSON)</button>
+            </div>
+          </div>
+          <button id="copyCodeBtn" class="copy-pill-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="copyBtnText">Copy</span>
+          </button>
+        </div>
+
+        <div class="code-editor-box">
+          <pre><code id="outputCodeSnippet" class="code-stream"></code></pre>
+        </div>
+      </section>
+
+      <!-- Live Diagnostics Stream Terminal -->
+      <section class="diagnostics-terminal-card">
+        <div class="terminal-bar">
+          <span class="terminal-title">Engine Diagnostics Stream</span>
+          <span class="pulse-dot-green"></span>
+        </div>
+        <div class="terminal-logs-window" id="consoleBody">
+          <div class="term-line"><span class="t-cyan">[00:00:01.02]</span> <span class="t-badge">INIT</span> Device: NVIDIA RTX 4090 • 24.00 GB detected</div>
+          <div class="term-line"><span class="t-cyan">[00:00:02.15]</span> <span class="t-purple">MOE</span> Sequential swap strategy active: \(M_{\text{peak}} \le 18.47\text{ GB}\)</div>
+          <div class="term-line"><span class="t-cyan">[00:00:03.40]</span> <span class="t-green">LATENTS</span> Allocated 75,600 tokens across 81 frames</div>
+          <div class="term-line"><span class="t-cyan">[00:00:04.88]</span> <span class="t-cyan">DIFFUSION</span> Step 24/50 • Temporal attention stable</div>
+        </div>
+      </section>
+    </div>
 
   </main>
 
-  <!-- Legal & Copyright Notice -->
+  <!-- Clean Minimalist Footer -->
   <footer class="app-footer">
-    <div class="footer-container">
-      <p>Architected by <strong>Engineer Abdullah Bin Zafar</strong> • Open-Source under Apache-2.0 License</p>
-      <p class="footer-disclaimer">Wan-Video is an open model family by Alibaba Cloud. wan-pilot is an independent community bridge and optimization workbench. All vector graphics and interface implementations are original work with zero third-party trademark infringement.</p>
+    <div class="footer-inner">
+      <div class="footer-meta">
+        <span>Architected by <strong>Engineer Abdullah Bin Zafar</strong></span>
+        <span>•</span>
+        <span>Open-Source under Apache-2.0</span>
+        <span>•</span>
+        <span>Wan-Video Community Optimization Engine</span>
+      </div>
     </div>
   </footer>
 
