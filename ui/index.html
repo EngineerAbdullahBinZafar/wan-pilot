@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wan-Video Pilot — Studio Workbench & Agent Bridge</title>
-  <meta name="description" content="Production preflight diagnostics, analytical VRAM budgeting, ComfyUI/CLI compilation, and agent bridge for Alibaba Wan-Video models.">
+  <title>wan-pilot — Studio Workbench & Agent Bridge</title>
+  <meta name="description" content="Industrial-grade preflight diagnostics, analytical VRAM budgeting, ComfyUI/CLI compilation, and agent bridge for Alibaba Wan-Video models.">
   <link rel="stylesheet" href="workbench.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Wan-Video Pilot",
+    "name": "wan-pilot",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Linux, Windows, macOS",
     "offers": {
@@ -27,169 +27,247 @@
   </script>
 </head>
 <body class="dark-theme">
+  <!-- Top App Bar -->
   <header class="app-header">
     <div class="header-container">
       <div class="brand">
-        <span class="logo-badge">WAN</span>
-        <h1>Wan-Video Pilot <span class="version-tag">v0.1.0</span></h1>
+        <!-- Custom Origami Ribbon W Logo (100% Original SVG) -->
+        <svg class="origami-logo" width="38" height="38" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="wGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#9333ea" />
+              <stop offset="100%" stop-color="#7c3aed" />
+            </linearGradient>
+            <linearGradient id="wGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#a855f7" />
+            </linearGradient>
+            <linearGradient id="wGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#c084fc" />
+              <stop offset="100%" stop-color="#6366f1" />
+            </linearGradient>
+          </defs>
+          <path d="M6 14L15 36L22 20L15 14H6Z" fill="url(#wGrad1)" />
+          <path d="M15 36L24 16L33 36L22 20L15 36Z" fill="url(#wGrad2)" />
+          <path d="M33 36L42 14H33L26 28L33 36Z" fill="url(#wGrad3)" />
+          <circle cx="24" cy="12" r="2.5" fill="#38bdf8" />
+        </svg>
+        <span class="brand-title">wan-pilot</span>
+        <span class="system-pill"><span class="pulse-dot"></span> System <code class="tag-code">#7c3aed</code></span>
       </div>
-      <p class="subtitle">Production Diagnostics, VRAM Budgeting & Workflow Compiler for Wan2.1 and Wan2.2 MoE</p>
-      <div class="nav-links">
-        <a href="https://github.com/EngineerAbdullahBinZafar/wan-pilot" target="_blank" rel="noopener">GitHub Repository</a>
-        <a href="mcp-actions.json" target="_blank">WebMCP Actions</a>
-        <a href="llms.txt" target="_blank">llms.txt</a>
+
+      <div class="header-meta">
+        <span class="meta-item"><span class="meta-label">NTP</span> DALICS</span>
+        <span class="meta-item"><span class="meta-label">State</span> <code class="tag-code">#0880c14</code></span>
+        <a href="https://github.com/EngineerAbdullahBinZafar/wan-pilot" target="_blank" rel="noopener" class="header-link">GitHub v0.1.0</a>
       </div>
     </div>
   </header>
 
-  <main class="main-container">
-    <!-- Grid Column 1: Diagnostics & Hardware Inspector -->
-    <section class="card diagnostics-card" data-mcp-action="diagnose_preflight">
-      <div class="card-header">
-        <h2>1. Hardware Preflight & Attention Doctor</h2>
-        <span class="status-indicator live">READY</span>
+  <!-- Studio Dashboard Layout -->
+  <main class="workbench-layout">
+    
+    <!-- Left Column: High-Density Telemetry & Latents -->
+    <aside class="column telemetry-col">
+      <div class="panel-card telemetry-card">
+        <div class="card-caption">Latent Dimensions</div>
+        <div class="metric-huge" id="tokenCountDisplay">75,600 <span class="metric-unit">tokens</span></div>
+        <div class="metric-subdetail">\(T_{\text{latent}} = 21\) • \(H \times W = 45 \times 80\)</div>
       </div>
-      <div class="card-body">
-        <div class="diag-group">
-          <label for="gpuSelect">Target Hardware Profile:</label>
-          <select id="gpuSelect" class="form-input">
-            <option value="4090">NVIDIA GeForce RTX 4090 (24 GB VRAM)</option>
-            <option value="3090">NVIDIA GeForce RTX 3090 (24 GB VRAM)</option>
-            <option value="4070">NVIDIA GeForce RTX 4070 (12 GB VRAM)</option>
-            <option value="custom">Custom / System Telemetry</option>
+
+      <div class="panel-card telemetry-card">
+        <div class="card-caption-row">
+          <span class="card-caption">Memory Telemetry</span>
+          <span class="metric-cap">/ 24.00 GB</span>
+        </div>
+        <div class="metric-huge purple-glow" id="peakVramDisplay">15.35 GB</div>
+        <div class="progress-track">
+          <div class="progress-fill purple-fill" id="vramProgressFill" style="width: 63.9%;"></div>
+        </div>
+        <div class="metric-subdetail" id="vramStatusSub">Sequential Swapping: Peak constrained below 18.47 GB</div>
+      </div>
+
+      <div class="panel-card telemetry-card">
+        <div class="card-caption-row">
+          <span class="card-caption">Dense Concurrent Peak</span>
+          <span class="metric-cap">/ 24.00 GB</span>
+        </div>
+        <div class="metric-huge red-glow" id="concurrentVramDisplay">53.60 GB</div>
+        <div class="progress-track">
+          <div class="progress-fill red-fill" style="width: 100%;"></div>
+        </div>
+        <div class="metric-subdetail danger-text">Requires 80GB H100 unless Swapped</div>
+      </div>
+
+      <div class="panel-card config-summary-card">
+        <div class="card-caption">Engine Hardware Target</div>
+        <div class="config-row">
+          <span>GPU Profile:</span>
+          <select id="gpuSelect" class="studio-select">
+            <option value="4090" selected>RTX 4090 (24 GB VRAM)</option>
+            <option value="3090">RTX 3090 (24 GB VRAM)</option>
+            <option value="4070">RTX 4070 (12 GB VRAM)</option>
+            <option value="a100">NVIDIA A100 (80 GB VRAM)</option>
           </select>
         </div>
-
-        <div class="diag-results">
-          <div class="metric-row">
-            <span>Attention Backend:</span>
-            <strong id="attBackend" class="badge badge-success">SDPA (PyTorch Native)</strong>
-          </div>
-          <div class="metric-row">
-            <span>Windows MSVC Status:</span>
-            <span id="msvcStatus">Auto-fallback active (Zero compiler trap)</span>
-          </div>
-          <div class="metric-row">
-            <span>OOM Traps Monitored:</span>
-            <span class="code-pill">MoE Concurrent</span>
-            <span class="code-pill">T5 VRAM</span>
-            <span class="code-pill">DiT FP32</span>
-            <span class="code-pill">VAE Spike</span>
-          </div>
+        <div class="config-row">
+          <span>Attention:</span>
+          <span class="tag-status live">SDPA Native</span>
         </div>
       </div>
-    </section>
+    </aside>
 
-    <!-- Grid Column 2: Analytical VRAM Estimator -->
-    <section class="card estimator-card" data-mcp-action="estimate_memory">
-      <div class="card-header">
-        <h2>2. Analytical VRAM Budget Calculator</h2>
-        <span class="status-indicator calc">ANALYTICAL</span>
-      </div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="modelSelect">Model Variant:</label>
-            <select id="modelSelect" class="form-input">
-              <option value="wan2.2_moe_14b" selected>Wan2.2 MoE 14B (Dual-Expert)</option>
-              <option value="wan2.1_14b">Wan2.1 14B (Dense DiT)</option>
-              <option value="wan2.1_1.3b">Wan2.1 1.3B (Compact)</option>
+    <!-- Center Column: Controls & Compiler Actions -->
+    <section class="column controls-col">
+      <div class="panel-card control-card">
+        <div class="card-header-clean">
+          <h3>Optimization Switches</h3>
+          <span class="badge-subtle">FastPath</span>
+        </div>
+
+        <!-- MoE Sequential Offload Switch (Matching the Video) -->
+        <div class="switch-row">
+          <div class="switch-info">
+            <span class="switch-title">MoE Sequential Offload</span>
+            <span class="switch-desc">Swap Expert \(\mathcal{E}_1 \to \mathcal{E}_2\) at \(t_{\text{moe}}\)</span>
+          </div>
+          <label class="studio-switch">
+            <input type="checkbox" id="moeOffloadSwitch" checked>
+            <span class="switch-slider cyan-glow"></span>
+          </label>
+        </div>
+
+        <div class="switch-row">
+          <div class="switch-info">
+            <span class="switch-title">T5 Text Encoder Offload</span>
+            <span class="switch-desc">Hold 4.8B T5 weights in Host CPU RAM</span>
+          </div>
+          <label class="studio-switch">
+            <input type="checkbox" id="t5CpuSwitch" checked>
+            <span class="switch-slider cyan-glow"></span>
+          </label>
+        </div>
+
+        <div class="switch-row">
+          <div class="switch-info">
+            <span class="switch-title">Tiled 3D Causal VAE</span>
+            <span class="switch-desc">Spatial 4-tile split (prevents 22GB spike)</span>
+          </div>
+          <label class="studio-switch">
+            <input type="checkbox" id="tiledVaeSwitch" checked>
+            <span class="switch-slider cyan-glow"></span>
+          </label>
+        </div>
+
+        <div class="parameters-grid">
+          <div class="param-box">
+            <label for="modelSelect">Model Arch</label>
+            <select id="modelSelect" class="studio-select">
+              <option value="wan2.2_moe_14b" selected>Wan2.2 MoE 14B</option>
+              <option value="wan2.1_14b">Wan2.1 Dense 14B</option>
+              <option value="wan2.1_1.3b">Wan2.1 Compact 1.3B</option>
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="resolutionSelect">Resolution:</label>
-            <select id="resolutionSelect" class="form-input">
+          <div class="param-box">
+            <label for="resolutionSelect">Resolution</label>
+            <select id="resolutionSelect" class="studio-select">
               <option value="480p">480p (832 x 480)</option>
               <option value="720p" selected>720p (1280 x 720)</option>
               <option value="1080p">1080p (1920 x 1080)</option>
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="precisionSelect">Precision:</label>
-            <select id="precisionSelect" class="form-input">
-              <option value="fp8" selected>FP8 (1.0 byte / param)</option>
-              <option value="bf16">BF16 (2.0 bytes / param)</option>
-              <option value="int4">INT4 (0.55 bytes / param)</option>
+          <div class="param-box">
+            <label for="precisionSelect">Precision</label>
+            <select id="precisionSelect" class="studio-select">
+              <option value="fp8" selected>FP8 (1.0 B/p)</option>
+              <option value="bf16">BF16 (2.0 B/p)</option>
+              <option value="int4">INT4 (0.55 B/p)</option>
             </select>
           </div>
         </div>
 
-        <div class="toggles-grid">
-          <label class="toggle-label">
-            <input type="checkbox" id="moeOffload" checked>
-            <span>Sequential Expert Swapping at \(t_{\text{moe}}\)</span>
-          </label>
-          <label class="toggle-label">
-            <input type="checkbox" id="t5Cpu" checked>
-            <span>T5 Encoder on Host CPU RAM</span>
-          </label>
-          <label class="toggle-label">
-            <input type="checkbox" id="tiledVae" checked>
-            <span>Tiled 3D Causal VAE Decode</span>
-          </label>
+        <!-- Synthesize Latents Action Button (As seen in the Video) -->
+        <button id="synthesizeBtn" class="action-btn-neon">
+          <span class="btn-text">Synthesize Latents</span>
+        </button>
+      </div>
+
+      <!-- Prompt Input & Workflow Compiler Drawer -->
+      <div class="panel-card compiler-card">
+        <div class="card-header-clean">
+          <h3>Cinematic Prompt & Workflow Compiler</h3>
+          <div class="tab-chips">
+            <button class="chip-btn active" data-format="cli_bash">Bash</button>
+            <button class="chip-btn" data-format="cli_powershell">PowerShell</button>
+            <button class="chip-btn" data-format="comfyui">ComfyUI</button>
+          </div>
         </div>
 
-        <div class="vram-meter-box">
-          <div class="vram-header">
-            <span>Peak VRAM Required:</span>
-            <strong id="peakVramText">18.47 GB</strong>
-            <span id="gpuFitBadge" class="badge badge-success">Fits 24GB GPU</span>
+        <textarea id="promptInput" class="studio-textarea" rows="2" placeholder="Describe the scene...">A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn.</textarea>
+
+        <div class="code-viewport">
+          <div class="code-viewport-bar">
+            <span id="compilerTargetLabel">BASH SCRIPT</span>
+            <button id="copyCodeBtn" class="copy-pill">Copy</button>
           </div>
-          <div class="progress-bar-container">
-            <div id="vramBar" class="progress-bar" style="width: 76.9%;"></div>
-          </div>
-          <div class="vram-subtext">
-            <span>Without sequential swapping: <span id="concurrentVramText" class="danger-text">53.6 GB (Crash / OOM)</span></span>
-          </div>
+          <pre><code id="outputCodeSnippet"># Compiler generating...</code></pre>
         </div>
       </div>
     </section>
 
-    <!-- Grid Column 3: Workflow Compiler & Export -->
-    <section class="card compiler-card" data-mcp-action="compile_workflow">
-      <div class="card-header">
-        <h2>3. Multi-Target Workflow Compiler</h2>
-        <span class="status-indicator green">ACTIVE</span>
-      </div>
-      <div class="card-body">
-        <div class="form-group">
-          <label for="promptInput">Prompt:</label>
-          <textarea id="promptInput" class="form-input prompt-area" rows="3">A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn.</textarea>
-        </div>
-
-        <div class="export-tabs">
-          <button class="tab-btn active" data-target="cli_bash">Official Bash</button>
-          <button class="tab-btn" data-target="cli_powershell">PowerShell</button>
-          <button class="tab-btn" data-target="comfyui_api">ComfyUI Prompt API</button>
-          <button class="tab-btn" data-target="comfyui_canvas">ComfyUI Canvas</button>
-          <button class="tab-btn" data-target="diffusers">Diffusers</button>
-        </div>
-
-        <div class="code-container">
-          <div class="code-actions">
-            <span id="codeLangTag">BASH</span>
-            <button id="copyBtn" class="btn btn-sm">Copy Code</button>
+    <!-- Right Column: Live Video Canvas & Render Viewport -->
+    <aside class="column viewport-col">
+      <div class="panel-card viewport-card">
+        <div class="viewport-header">
+          <div class="viewport-title-group">
+            <span class="preview-badge">Preview</span>
+            <span class="preview-status" id="previewStatusLabel">Active Latent Stream</span>
           </div>
-          <pre><code id="outputCode"># Official Wan2.2 Execution Script
-CUDA_VISIBLE_DEVICES=0 python generate.py \
-  --task t2v-14B \
-  --size 1280*720 \
-  --prompt "A cinematic shot of a robotic dragonfly skimming across bioluminescent alpine waters at dawn." \
-  --precision fp8 \
-  --expert_offload True \
-  --t5_cpu True \
-  --tiled_vae True</code></pre>
+          <div class="viewport-controls">
+            <span class="timecode" id="timecodeDisplay">00:00:09.08</span>
+          </div>
+        </div>
+
+        <!-- Interactive Animated Canvas Simulating Latent Swirls -->
+        <div class="canvas-wrapper">
+          <canvas id="latentCanvas" width="640" height="360"></canvas>
+          <div class="canvas-overlay-tag" id="canvasTag">Noties</div>
+        </div>
+
+        <!-- Video Playback & Scrubber Controls -->
+        <div class="playback-bar">
+          <button id="playPauseBtn" class="control-icon-btn">❚❚</button>
+          <div class="scrubber-track">
+            <div class="scrubber-fill" id="scrubberFill" style="width: 75%;"></div>
+          </div>
+          <span class="playback-pct" id="playbackPctText">75%</span>
         </div>
       </div>
-    </section>
+
+      <!-- Live Terminal Console Drawer -->
+      <div class="panel-card console-card">
+        <div class="console-header">
+          <span>Engine Diagnostics Stream</span>
+          <span class="live-dot-green"></span>
+        </div>
+        <div class="console-body" id="consoleBody">
+          <div class="log-line">[00:00:01.02] <span class="log-cyan">INIT</span> Device: NVIDIA RTX 4090 • 24.00 GB detected</div>
+          <div class="log-line">[00:00:02.15] <span class="log-purple">MOE</span> Sequential swap strategy enabled: \(M_{\text{peak}} \le 18.47\text{ GB}\)</div>
+          <div class="log-line">[00:00:03.40] <span class="log-green">LATENTS</span> Allocated \(75,600\) tokens across 81 frames</div>
+          <div class="log-line">[00:00:04.88] <span class="log-cyan">DIFFUSION</span> Step 24/50 • Temporal attention stable</div>
+        </div>
+      </div>
+    </aside>
+
   </main>
 
+  <!-- Legal & Copyright Notice -->
   <footer class="app-footer">
     <div class="footer-container">
       <p>Architected by <strong>Engineer Abdullah Bin Zafar</strong> • Open-Source under Apache-2.0 License</p>
-      <p class="footer-note">Wan-Video is developed by Alibaba Cloud. Wan-Video Pilot is an independent community bridge and optimization toolkit.</p>
+      <p class="footer-disclaimer">Wan-Video is an open model family by Alibaba Cloud. wan-pilot is an independent community bridge and optimization workbench. All vector graphics and interface implementations are original work with zero third-party trademark infringement.</p>
     </div>
   </footer>
 
